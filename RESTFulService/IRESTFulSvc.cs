@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
+using System.ServiceModel.Web;
 using System.Text;
 
 namespace RESTFulService
@@ -12,18 +13,23 @@ namespace RESTFulService
     public interface IRESTFulSvc
     {
         [OperationContract]
+        [WebInvoke(UriTemplate = "CreatePerson", Method = "POST")]
         Person CreatePerson(Person createPerson);
 
         [OperationContract]
-        List<Person> GetAllPerson();
+        [WebGet(UriTemplate = "GetAllPersons")]
+        List<Person> GetAllPersons();
 
         [OperationContract]
-        Person GetAPerson(int id);
+        [WebGet(UriTemplate = "Person/{id}")]
+        Person GetAPerson(string id);
 
         [OperationContract]
-        Person UpdatePerson(int id, Person updatePerson);
+        [WebInvoke(UriTemplate = "UpdatePerson/{id}", Method = "PUT")]
+        Person UpdatePerson(string id, Person updatePerson);
 
         [OperationContract]
-        void DeletePerson(int id);
+        [WebInvoke(UriTemplate = "DeletePerson/{id}", Method = "DELETE")]
+        void DeletePerson(string id);
     }
 }

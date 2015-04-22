@@ -9,9 +9,6 @@ using RESTFulService;
 
 namespace RESTFulService
 {
-
-    [AspNetCompatibilityRequirements
-        (RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class RESTFulSvc : IRESTFulSvc
     {
@@ -30,17 +27,17 @@ namespace RESTFulService
 
         }
 
-        public List<Person> GetAllPerson()
+        public List<Person> GetAllPersons()
         {
             return persons.ToList();
         }
 
-        public Person GetAPerson(int id)
+        public Person GetAPerson(string id)
         {
-            return persons.FirstOrDefault(p => p.PersonId == id);
+            return persons.FirstOrDefault(p => p.PersonId == Convert.ToInt32(id));
         }
 
-        public Person UpdatePerson(int id, Person updatePerson)
+        public Person UpdatePerson(string id, Person updatePerson)
         {
             var person = GetAPerson(id);
             person.PersonFirst = updatePerson.PersonFirst;
@@ -49,7 +46,7 @@ namespace RESTFulService
             return person;
         }
 
-        public void DeletePerson(int id)
+        public void DeletePerson(string id)
         {
             var person = GetAPerson(id);
             persons.Remove(person);

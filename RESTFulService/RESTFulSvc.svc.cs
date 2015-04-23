@@ -46,10 +46,11 @@ namespace RESTFulService
             return person;
         }
 
-        public void DeletePerson(string id)
+        public int DeletePerson(string id)
         {
             var person = GetAPerson(id);
             persons.Remove(person);
+            return persons.Count;
         }
     }
 }

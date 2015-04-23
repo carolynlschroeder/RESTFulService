@@ -30,6 +30,6 @@ namespace RESTFulService
 
         [OperationContract]
         [WebInvoke(UriTemplate = "DeletePerson/{id}", Method = "DELETE")]
-        void DeletePerson(string id);
+        int DeletePerson(string id);
     }
 }

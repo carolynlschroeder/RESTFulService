@@ -17,7 +17,8 @@ namespace RESTFulServiceClient
         {
             var runProgram = new RunProgram();
             //runProgram.RunGetAllPersons();
-            runProgram.RunGetAPerson("1");
+            //runProgram.RunGetAPerson("1");
+            runProgram.RunDeletePerson("2");
             Console.Read();
         }
 
@@ -37,8 +38,8 @@ namespace RESTFulServiceClient
 
                         var strReader = new StreamReader(respStream, Encoding.UTF8);
                         var reader = new StringReader(RemoveAllNamespaces(strReader.ReadToEnd()));
-                        var xmlSer = new System.Xml.Serialization.XmlSerializer(typeof(List<Person>));
-                        var personList = (List<Person>)xmlSer.Deserialize(reader);
+                        var xmlSer = new System.Xml.Serialization.XmlSerializer(typeof (List<Person>));
+                        var personList = (List<Person>) xmlSer.Deserialize(reader);
 
                         foreach (var p in personList)
                         {
@@ -49,7 +50,8 @@ namespace RESTFulServiceClient
                 }
                 else
                 {
-                    Console.WriteLine(string.Format("Status Code: {0}, Status Description: {1}", resp.StatusCode, resp.StatusDescription));
+                    Console.WriteLine(string.Format("Status Code: {0}, Status Description: {1}", resp.StatusCode,
+                        resp.StatusDescription));
                 }
 
             }
@@ -69,8 +71,8 @@ namespace RESTFulServiceClient
 
                         var strReader = new StreamReader(respStream, Encoding.UTF8);
                         var reader = new StringReader(RemoveAllNamespaces(strReader.ReadToEnd()));
-                        var xmlSer = new System.Xml.Serialization.XmlSerializer(typeof(Person));
-                        var person = (Person)xmlSer.Deserialize(reader);
+                        var xmlSer = new System.Xml.Serialization.XmlSerializer(typeof (Person));
+                        var person = (Person) xmlSer.Deserialize(reader);
 
 
                         Console.WriteLine(String.Format("{0} {1} {2} {3}", person.PersonId, person.PersonFirst,
@@ -80,12 +82,39 @@ namespace RESTFulServiceClient
                 }
                 else
                 {
-                    Console.WriteLine(string.Format("Status Code: {0}, Status Description: {1}", resp.StatusCode, resp.StatusDescription));
+                    Console.WriteLine(string.Format("Status Code: {0}, Status Description: {1}", resp.StatusCode,
+                        resp.StatusDescription));
                 }
 
             }
 
+            public void RunDeletePerson(string id)
+            {
+                var uri = String.Format(@"{0}/{1}/{2}", ConfigurationManager.AppSettings["serviceUri"], "DeletePerson",
+                    id);
+                var req = WebRequest.Create(uri);
+
+                req.Method = "DELETE";
+                var resp = req.GetResponse() as HttpWebResponse;
+                if (resp.StatusCode == HttpStatusCode.OK)
+                {
+                    using (var respStream = resp.GetResponseStream())
+                    {
+                        var strReader = new StreamReader(respStream, Encoding.UTF8);
+                        var xElement = XElement.Parse(strReader.ReadToEnd());
+                        var numberOfPersons = xElement.Value;
+                        Console.WriteLine("Number of persons is {0}", numberOfPersons);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine(string.Format("Status Code: {0}, Status Description: {1}", resp.StatusCode,
+                        resp.StatusDescription));
+                }
+
+            }
         }
+
 
         public static string RemoveAllNamespaces(string xmlDocument)
         {

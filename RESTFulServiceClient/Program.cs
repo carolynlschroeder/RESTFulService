@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using System.Configuration;
 
 namespace RESTFulServiceClient
 {
@@ -14,32 +15,76 @@ namespace RESTFulServiceClient
     {
         static void Main(string[] args)
         {
-            WebRequest req = WebRequest.Create(@"http://localhost:52285/RESTFulSvc.svc/GetAllPersons");
+            var runProgram = new RunProgram();
+            //runProgram.RunGetAllPersons();
+            runProgram.RunGetAPerson("1");
+            Console.Read();
+        }
 
-            req.Method = "GET";
+        public class RunProgram
+        {
+            public void RunGetAllPersons()
+            {
+                var uri = String.Format(@"{0}/{1}", ConfigurationManager.AppSettings["serviceUri"], "GetAllPersons");
+                var req = WebRequest.Create(uri);
 
-           HttpWebResponse resp = req.GetResponse() as HttpWebResponse;
-            if (resp.StatusCode == HttpStatusCode.OK)
-           {
-                using (Stream respStream = resp.GetResponseStream())
+                req.Method = "GET";
+                var resp = req.GetResponse() as HttpWebResponse;
+                if (resp.StatusCode == HttpStatusCode.OK)
                 {
+                    using (var respStream = resp.GetResponseStream())
+                    {
 
-                    var strReader = new StreamReader(respStream, Encoding.UTF8);
-                    var reader = new StringReader(RemoveAllNamespaces(strReader.ReadToEnd()));
-                     System.Xml.Serialization.XmlSerializer xmlSer = new System.Xml.Serialization.XmlSerializer(typeof(List<Person>));
+                        var strReader = new StreamReader(respStream, Encoding.UTF8);
+                        var reader = new StringReader(RemoveAllNamespaces(strReader.ReadToEnd()));
+                        var xmlSer = new System.Xml.Serialization.XmlSerializer(typeof(List<Person>));
                         var personList = (List<Person>)xmlSer.Deserialize(reader);
 
-                    foreach (var p in personList)
-                    {
-                        Console.WriteLine(String.Format("{0} {1}", p.PersonFirst, p.PersonLast));
+                        foreach (var p in personList)
+                        {
+                            Console.WriteLine(String.Format("{0} {1} {2} {3}", p.PersonId, p.PersonFirst, p.PersonLast,
+                                p.Income));
+                        }
                     }
                 }
+                else
+                {
+                    Console.WriteLine(string.Format("Status Code: {0}, Status Description: {1}", resp.StatusCode, resp.StatusDescription));
+                }
+
             }
-            else
+
+            public void RunGetAPerson(string id)
             {
-                Console.WriteLine(string.Format("Status Code: {0}, Status Description: {1}", resp.StatusCode, resp.StatusDescription));
+                var uri = String.Format(@"{0}/{1}/{2}", ConfigurationManager.AppSettings["serviceUri"], "GetAPerson",
+                    id);
+                var req = WebRequest.Create(uri);
+
+                req.Method = "GET";
+                var resp = req.GetResponse() as HttpWebResponse;
+                if (resp.StatusCode == HttpStatusCode.OK)
+                {
+                    using (var respStream = resp.GetResponseStream())
+                    {
+
+                        var strReader = new StreamReader(respStream, Encoding.UTF8);
+                        var reader = new StringReader(RemoveAllNamespaces(strReader.ReadToEnd()));
+                        var xmlSer = new System.Xml.Serialization.XmlSerializer(typeof(Person));
+                        var person = (Person)xmlSer.Deserialize(reader);
+
+
+                        Console.WriteLine(String.Format("{0} {1} {2} {3}", person.PersonId, person.PersonFirst,
+                            person.PersonLast, person.Income));
+
+                    }
+                }
+                else
+                {
+                    Console.WriteLine(string.Format("Status Code: {0}, Status Description: {1}", resp.StatusCode, resp.StatusDescription));
+                }
+
             }
-            Console.Read();
+
         }
 
         public static string RemoveAllNamespaces(string xmlDocument)

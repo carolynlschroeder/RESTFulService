@@ -21,7 +21,7 @@ namespace RESTFulService
         List<Person> GetAllPersons();
 
         [OperationContract]
-        [WebGet(UriTemplate = "Person/{id}")]
+        [WebGet(UriTemplate = "GetAPerson/{id}")]
         Person GetAPerson(string id);
 
         [OperationContract]

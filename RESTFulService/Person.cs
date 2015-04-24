@@ -8,6 +8,7 @@ using System.Xml.Serialization;
 namespace RESTFulService
 {
     [DataContract]
+    [XmlType("Person")]
     public class Person
     {
         [DataMember]

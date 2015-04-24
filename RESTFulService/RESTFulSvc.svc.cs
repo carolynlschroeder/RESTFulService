@@ -37,9 +37,9 @@ namespace RESTFulService
             return persons.FirstOrDefault(p => p.PersonId == Convert.ToInt32(id));
         }
 
-        public Person UpdatePerson(string id, Person updatePerson)
+        public Person UpdatePerson(Person updatePerson)
         {
-            var person = GetAPerson(id);
+            var person = GetAPerson(updatePerson.PersonId.ToString());
             person.PersonFirst = updatePerson.PersonFirst;
             person.PersonLast = updatePerson.PersonLast;
             person.Income = updatePerson.Income;

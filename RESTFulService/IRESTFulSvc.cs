@@ -25,8 +25,8 @@ namespace RESTFulService
         Person GetAPerson(string id);
 
         [OperationContract]
-        [WebInvoke(UriTemplate = "UpdatePerson/{id}", Method = "PUT")]
-        Person UpdatePerson(string id, Person updatePerson);
+        [WebInvoke(UriTemplate = "UpdatePerson", Method = "PUT")]
+        Person UpdatePerson(Person updatePerson);
 
         [OperationContract]
         [WebInvoke(UriTemplate = "DeletePerson/{id}", Method = "DELETE")]
